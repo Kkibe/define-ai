@@ -7,6 +7,7 @@ import Modal from 'react-native-modal';
 import { TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CardPaymentModal from '../components/CardPaymentModal';
+//import { PayPal } from 'react-native-paypal';
 //import DeviceInfo from 'react-native-device-info';
 
 export default SettingsScreen = ({navigation}) => {
@@ -23,6 +24,30 @@ export default SettingsScreen = ({navigation}) => {
   const toggleCardPaymentModal = () => {
     setCardPaymentVisible(!isCardPaymentVisible);
     setVisible(!isVisible);
+  };
+  
+
+  const onPayButtonPress = async () => {
+    try {
+      const payment = await PayPal.pay({
+        clientId: 'YOUR_CLIENT_ID',
+        environment: PayPal.SANDBOX, // or PayPal.PRODUCTION for live payments
+        price: '9.99', // amount to charge
+        currency: 'USD', // currency of the payment
+        description: 'Purchase Description', // payment description
+      });
+
+      if (payment.success) {
+        console.log('Payment successful!');
+        // Handle the success scenario
+      } else {
+        console.log('Payment cancelled or failed!');
+        // Handle the failure or cancellation scenario
+      }
+    } catch (e) {
+      console.error('Error in PayPal payment:', e);
+      // Handle any error that occurs during the payment process
+    }
   };
   
   const handleButton2Press = () => {
@@ -140,6 +165,10 @@ export default SettingsScreen = ({navigation}) => {
           <TouchableOpacity style={styles.button} onPress={toggleCardPaymentModal}>
             <Text style={styles.buttonText}>CREDIT CARD</Text>
             <Icon name='card' size={24} style={styles.icon} />
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.button} onPress={toggleCardPaymentModal}>
+            <Text style={styles.buttonText}>CONTINUE WITH PAYPAL</Text>
           </TouchableOpacity>
         </View>
       </Modal>
